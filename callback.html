@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIAP PACK - OAuth Callback</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background: #f6f8fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+  .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); padding: 40px 32px; max-width: 500px; width: 100%; text-align: center; }
+  h1 { font-size: 20px; color: #1f2937; margin-bottom: 8px; }
+  .sub { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+  .label { font-size: 13px; color: #6b7280; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .code { background: #f0fdf4; border: 2px solid #16a34a; border-radius: 10px; padding: 16px; font-family: "SF Mono", "Fira Code", monospace; font-size: 16px; color: #16a34a; word-break: break-all; margin-bottom: 16px; user-select: all; }
+  .btn { display: inline-block; background: #0b5ed7; color: #fff; font-weight: 700; padding: 12px 28px; border-radius: 50px; border: none; cursor: pointer; font-size: 15px; transition: background .15s; }
+  .btn:hover { background: #084298; }
+  .copy-ok { color: #16a34a; font-weight: 700; margin-top: 12px; display: none; }
+  .error { background: #fef2f2; border: 2px solid #dc2626; border-radius: 10px; padding: 16px; color: #dc2626; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>SIAP PACK</h1>
+  <p class="sub">TikTok Shop OAuth Callback</p>
+
+  <div id="success" style="display:none">
+    <p class="label">Auth Code</p>
+    <div class="code" id="authCode"></div>
+    <button class="btn" onclick="copyCode()">📋 Copy Auth Code</button>
+    <p class="copy-ok" id="copied">✓ Copied!</p>
+  </div>
+
+  <div id="fail" style="display:none">
+    <div class="error">
+      <p><strong>Tidak ada auth_code</strong></p>
+      <p style="margin-top:8px; font-size:14px;">URL tidak mengandung parameter auth_code.</p>
+    </div>
+  </div>
+
+  <div id="pending">
+    <p style="color:#6b7280;">Menunggu callback dari TikTok...</p>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('auth_code') || params.get('code');
+  const err = params.get('error');
+
+  document.getElementById('pending').style.display = 'none';
+
+  if (code) {
+    document.getElementById('success').style.display = 'block';
+    document.getElementById('authCode').textContent = code;
+    document.title = 'Auth Code: ' + code;
+  } else if (err) {
+    document.getElementById('fail').style.display = 'block';
+    document.querySelector('.error p:last-child').textContent = 'Error: ' + err;
+  } else {
+    document.getElementById('fail').style.display = 'block';
+  }
+
+  function copyCode() {
+    navigator.clipboard.writeText(document.getElementById('authCode').textContent);
+    document.getElementById('copied').style.display = 'block';
+    setTimeout(() => { document.getElementById('copied').style.display = 'none'; }, 2000);
+  }
+</script>
+</body>
+</html>
